@@ -1,5 +1,8 @@
 # Quick definitions on the fly
 
+$ErrorActionPreference = 'silentlycontinue'
+
+function banner_func {
 echo --------------------------------------------------------------------------------O
 "`n"
 write-host '
@@ -11,23 +14,75 @@ write-host '
 ╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝  ╚═════╝        ╚═╝    ╚═════╝      ╚═════╝  ╚═════╝ 
                                                                                    ' -foregroundcolor Red
 echo " "
-write-host "Version 0.1.5 Pre-Alpha"
+write-host "Version 0.4.5 Pre-Alpha"
 write-host "~ DukeZilla 2022"
 echo " "
 write-host "Source: Wordnik.com"
-"`n"		
 echo " "
+write-host "Type ""help"" for information on usage of Lingo To Go."
+"`n"	
+}
 
+function main_func {
+echo " "
 $uc00 = read-host "LTG>"
 echo " "
-
 if ( $uc00 -like "help" ) {
-	dictionary
+	type help.txt
+	main_func
 }
+if ( $uc00 -like "dictionary" ) {
+	echo 'dictionary_func' > start.txt
+	dictionary_func
+	main_func
+}
+if ( $uc00 -like "wordbank") {
+	echo 'wordbank_func' > start.txt
+	wordbank_func
+	main_func
+}
+if ( $uc00 -like "study" ) {
+	echo 'study_func' > start.txt
+	echo "Coming soon"
+	main_func
+}
+if ( $uc00 -like "lang" ) {
+	echo "Coming soon"
+	main_func
+}
+if ( $uc00 -like "thesaurus" ) {
+	echo 'study_func' > start.txt
+	echo "Coming soon"
+	main_func
+}
+if ( $uc00 -like "update" ) {
+	set-executionpolicy remotesigned
+	pwsh.exe updater.ps1
+	main_func
+}
+if ( $uc00 -like "banner" ) {
+	banner_func
+	main_func
+}
+if ( $uc00 -like "clear" ) {
+	clear
+	main_func
+}
+if ( $uc00 -like "exit" ) {
+	exit
+}
+write-host """$uc00"" is not a recognized command. Type ""help"" for more information."
+main_func
+}
+
 # - - - - - - - - - - - - - - - - - - - - - -
 # BEGINNING
-function dictionary {
+function dictionary_func {
 $word = read-host "Define"
+if ($word -like "main") {
+	echo 'main_func' > start.txt
+	main_func
+}
 #-#-#
 cd \
 cd "$env:USERPROFILE"
@@ -43,12 +98,13 @@ echo $word >> "$word.txt"
 echo " " >> "$word.txt"
 # - - - - - - - - - - - - - - - - - - - - - -
 # WEB PROCESS
-$ErrorActionPreference = 'silentlycontinue'
 if ( $word -contains ' ' ) {
+	$word = $word.replace(" ", "+")
+}
+$web00 = invoke-webrequest -uri "https://duckduckgo.com/?q=spelling+$word&t=brave&ia=answer"
+if ( $word -contains '+' ) {
 	$word = $word.replace(" ", "%20")
 }
-#$web00 = invoke-webrequest -uri 
-#$web00.Content >> temp05.txt
 $web01 = invoke-webrequest -uri https://wordnik.com/words/$word
 $web01.Content >> temp00.txt
 $web02 = invoke-webrequest -uri https://thesaurus.com/browse/$word
@@ -73,22 +129,36 @@ $v03.readline()
 $v03.readline() | foreach-object {$_ -match "<p?(.*)</p>"} | Out-Null
 $check = $matches[1] -split ">(.*)Check" | select-object -index 1
 # - # - #
-if ($check -like "Sorry, no definitions found.") {
+if ($check -like "*Sorry, no definitions found.*") {
+	echo ------------------------------O
+	echo " "
 	write-host "Sorry, no definitions found."
+	echo " "
 	$v01.Close()
 	$v01.Dispose()
 	$v03.Close()
 	$v03.Dispose()
-	"`n"
+	$v04.Close()
+	$v04.Dispose()
 	remove-item temp00.txt
 	remove-item temp01.txt
 	remove-item temp02.txt
+	remove-item temp03.txt
+	remove-item temp04.txt
+	remove-item $word.txt
 	Clear-Variable -name "matches"
-	pause
-	"`n"
-	echo --------------------------------------------------------------------------------O
-	"`n"
-	dictionary
+	$v07 = $web00.links | select-object "href"
+	$v08 = $v07 -split "[+}]" | select-object -index 7, 10, 13, 16, 19, 22, 25, 28
+	$v09 = [string]::join(", ",$v08)
+	$spell = $v09 -replace "%20", " "
+	echo " "
+	write-host "$word does not appear to be spelled correctly."
+	echo " "
+	write-host "Suggestions: $spell"
+	echo " "
+	echo ------------------------------O
+	echo " "
+	dictionary_func
 }
 # - - - - - - - - - - - - - - - - - - - - - -
 # WORD TOPIC OUTPUT
@@ -146,8 +216,35 @@ for ($i=0; $i -le 7; $i++) {
 }
 echo --------------------------------------------------------------------------------O
 "`n"
-dictionary }
+dictionary_func }
+
+function wordbank_func {
+cd \
+cd "$env:USERPROFILE"
+cd desktop
+cd Words
+echo " "
+$wb = read-host "Word Bank"
+if ($wb -like "list") {
+	ls | select-object "LastWriteTime", "Name"
+	wordbank_func
+}
+if ($wb -like "open") {
+	cd ..
+	start Words
+}
+if ($wb -like "main") {
+	echo 'main_func' > start.txt
+	main_func
+}
+wordbank_func
+}
 
 # Initiator
-
-dictionary
+banner_func
+Get-Content start.txt | Foreach-Object{
+	$func_start = $_.Split('=')
+	New-Variable -Name $func_start[0] -Value $func_start[1]
+}
+& $func_start
+main_func
