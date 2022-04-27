@@ -1,0 +1,65 @@
+Name
+ dictionary
+
+Syntax
+ >Define: [<word> [Source "<source-to-website>"]] 
+
+Paremeters
+ Source	Modify the source of the dictionary.
+
+
+Name
+ wordbank
+
+Syntax
+ >Word Bank: [list -a | -r [open]]
+
+Paremeters
+ -a     Sort words in alphanetical order.
+ -r     Sort words by most recent.
+ open   Open the word bank.
+
+
+Name
+ study
+
+Syntax
+ >Study: [cards -io | -rand | -rcnt | -q]
+
+Paremeters
+ -io    Sort cards in order.
+ -rand  Sort cards randomly.
+ -rcnt  Sort cards by recently defined words.
+ -q     Specify quantity of cards.
+
+
+Name
+ lang
+
+Syntax
+ Lang [-en | -es]
+
+Paremeters
+ -en    Change language to English
+ -es    Change language to Spanish
+
+
+Name
+ thesaurus
+
+Syntax
+ >thesaurus: [<word> | -syn | -ant [Source "<source-to-website>"]]
+
+Paremeters
+ -syn   Search synonyms of a specified word.
+ -ant   Search antonyms of a specified word.
+ Source Modify the source of the thesaurus.
+
+
+Extra
+ main (Return to main menu.)
+ update (This command will update the software upon execution.)
+ clear (This command will clear the screen.)
+ exit (To close the software.)
+
+------------------------------O
