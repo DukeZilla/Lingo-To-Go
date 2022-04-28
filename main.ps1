@@ -14,10 +14,10 @@ write-host '
 ╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝  ╚═════╝        ╚═╝    ╚═════╝      ╚═════╝  ╚═════╝ 
                                                                                    ' -foregroundcolor Red
 echo " "
-write-host "Version 0.4.5 Pre-Alpha"
+write-host "Version 0.4.11 Pre-Alpha"
 write-host "~ DukeZilla 2022"
 echo " "
-write-host "Source: Wordnik.com"
+write-host "Sources: www.wordnik.com, www.thesaurus.com, www.duckduckgo.com"
 echo " "
 write-host "Type ""help"" for information on usage of Lingo To Go."
 "`n"	
@@ -56,7 +56,7 @@ if ( $uc00 -like "thesaurus" ) {
 	main_func
 }
 if ( $uc00 -like "update" ) {
-	set-executionpolicy remotesigned
+	set-executionpolicy bypass
 	pwsh.exe updater.ps1
 	main_func
 }
@@ -94,6 +94,16 @@ if ( -not (Test-Path Words) ) {
 	write-host "A Word bank was added to your desktop."
 }
 cd Words
+#-#-#
+if (Test-Path "$word.txt") {
+	echo " "
+	echo " "
+	type "$word.txt"
+	echo " "
+	echo --------------------------------------------------------------------------------O
+	echo " "
+	dictionary_func
+}
 echo $word >> "$word.txt"
 echo " " >> "$word.txt"
 # - - - - - - - - - - - - - - - - - - - - - -
@@ -105,6 +115,7 @@ $web00 = invoke-webrequest -uri "https://duckduckgo.com/?q=spelling+$word&t=brav
 if ( $word -contains '+' ) {
 	$word = $word.replace(" ", "%20")
 }
+$web00.Content >> temp08.txt
 $web01 = invoke-webrequest -uri https://wordnik.com/words/$word
 $web01.Content >> temp00.txt
 $web02 = invoke-webrequest -uri https://thesaurus.com/browse/$word
@@ -123,13 +134,17 @@ $file01 = "$path\temp02.txt"
 $v03 = [System.IO.StreamReader]::new($file01)
 $file02 = "$path\temp04.txt"
 $v04 = [System.IO.StreamReader]::new($file02)
+$file03 = "$path\temp08.txt"
+$v10 = [System.IO.StreamReader]::new($file03)
 $v03.readline()
 # - - - - - - - - - - - - - - - - - - - - - -
 # SPELLING CHECK
 $v03.readline() | foreach-object {$_ -match "<p?(.*)</p>"} | Out-Null
-$check = $matches[1] -split ">(.*)Check" | select-object -index 1
+$check01 = $matches[1] -split ">(.*)Check" | select-object -index 1
+$v10.readline() | foreach-object {$_ -match "does not appear to be spelled correctly."} | Out-Null
+$check00 = $matches[0]
 # - # - #
-if ($check -like "*Sorry, no definitions found.*") {
+if ($check00 -like "*does not appear to be spelled correctly.*") {
 	echo ------------------------------O
 	echo " "
 	write-host "Sorry, no definitions found."
@@ -140,12 +155,15 @@ if ($check -like "*Sorry, no definitions found.*") {
 	$v03.Dispose()
 	$v04.Close()
 	$v04.Dispose()
+	$v10.Close()
+	$v10.Dispose()
 	remove-item temp00.txt
 	remove-item temp01.txt
 	remove-item temp02.txt
 	remove-item temp03.txt
 	remove-item temp04.txt
-	remove-item $word.txt
+	remove-item temp08.txt
+	remove-item "$word.txt"
 	Clear-Variable -name "matches"
 	$v07 = $web00.links | select-object "href"
 	$v08 = $v07 -split "[+}]" | select-object -index 7, 10, 13, 16, 19, 22, 25, 28
@@ -155,6 +173,34 @@ if ($check -like "*Sorry, no definitions found.*") {
 	write-host "$word does not appear to be spelled correctly."
 	echo " "
 	write-host "Suggestions: $spell"
+	echo " "
+	echo ------------------------------O
+	echo " "
+	dictionary_func
+}
+if ($check01 -like "*Sorry, no definitions found.*") {
+	echo ------------------------------O
+	echo " "
+	write-host "Sorry, no definitions found."
+	echo " "
+	$v01.Close()
+	$v01.Dispose()
+	$v03.Close()
+	$v03.Dispose()
+	$v04.Close()
+	$v04.Dispose()
+	$v10.Close()
+	$v10.Dispose()
+	remove-item temp00.txt
+	remove-item temp01.txt
+	remove-item temp02.txt
+	remove-item temp03.txt
+	remove-item temp04.txt
+	remove-item temp08.txt
+	remove-item "$word.txt"
+	Clear-Variable -name "matches"
+	echo " "
+	write-host "Try using another source."
 	echo " "
 	echo ------------------------------O
 	echo " "
@@ -208,9 +254,11 @@ $v04.Close()
 $v04.Dispose()
 $v05.Close()
 $v05.Dispose()
-for ($i=0; $i -le 7; $i++) {
+$v10.Close()
+$v10.Dispose()
+for ($i=0; $i -le 8; $i++) {
 	remove-item temp0$i.txt
-	if ($i -eq 7) {
+	if ($i -eq 8) {
 		break
 	}
 }
