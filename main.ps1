@@ -1,6 +1,7 @@
 # Quick definitions on the fly
 
 $ErrorActionPreference = 'silentlycontinue'
+$p00 = (pwd).path
 
 function banner_func {
 echo --------------------------------------------------------------------------------O
@@ -14,16 +15,28 @@ write-host '
 ╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝  ╚═════╝        ╚═╝    ╚═════╝      ╚═════╝  ╚═════╝ 
                                                                                    ' -foregroundcolor Red
 echo " "
-write-host "Version 0.4.11 Pre-Alpha"
+write-host "Vocab words for takeout!" -foregroundcolor Yellow
+echo " "
+write-host "Version 0.4.16 Pre-Alpha"
 write-host "~ DukeZilla 2022"
 echo " "
-write-host "Sources: www.wordnik.com, www.thesaurus.com, www.duckduckgo.com"
+echo --------------------------------O
 echo " "
+test-connection google.com -count 1 | Out-Null
+if ( $lastexitcode -eq "1" ) {
+	write-host "Internet Status: Not Connected" -foregroundcolor Red
+} else {
+	write-host "Internet Status: Connected" -foregroundcolor Green
+}
+write-host "Sources: www.wordnik.com, www.thesaurus.com, www.duckduckgo.com"
 write-host "Type ""help"" for information on usage of Lingo To Go."
-"`n"	
+echo " "	
+echo --------------------------------O
+echo " "	
 }
 
 function main_func {
+cd $p00
 echo " "
 $uc00 = read-host "LTG>"
 echo " "
@@ -51,7 +64,7 @@ if ( $uc00 -like "lang" ) {
 	main_func
 }
 if ( $uc00 -like "thesaurus" ) {
-	echo 'study_func' > start.txt
+	echo 'thesaurus_func' > start.txt
 	echo "Coming soon"
 	main_func
 }
@@ -69,6 +82,7 @@ if ( $uc00 -like "clear" ) {
 	main_func
 }
 if ( $uc00 -like "exit" ) {
+	kill -name cmd
 	exit
 }
 write-host """$uc00"" is not a recognized command. Type ""help"" for more information."
@@ -265,7 +279,7 @@ for ($i=0; $i -le 8; $i++) {
 echo --------------------------------------------------------------------------------O
 "`n"
 dictionary_func }
-
+# - - - - - - - - - - - - - - - - - - - - - 
 function wordbank_func {
 cd \
 cd "$env:USERPROFILE"
@@ -287,7 +301,11 @@ if ($wb -like "main") {
 }
 wordbank_func
 }
-
+# - - - - - - - - - - - - - - - - - - - - - 
+function study_func {
+	
+}
+# - - - - - - - - - - - - - - - - - - - - - 
 # Initiator
 banner_func
 Get-Content start.txt | Foreach-Object{
