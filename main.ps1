@@ -17,17 +17,26 @@ write-host '
 echo " "
 write-host "Vocab words for takeout!" -foregroundcolor Yellow
 echo " "
-write-host "Version 0.4.16 Pre-Alpha"
+write-host "Version 0.4.20 Pre-Alpha"
 write-host "~ DukeZilla 2022"
 echo " "
 echo --------------------------------O
 echo " "
-test-connection google.com -count 1 | Out-Null
+ping google.com -n 1 | Out-Null
 if ( $lastexitcode -eq "1" ) {
 	write-host "Internet Status: Not Connected" -foregroundcolor Red
 } else {
 	write-host "Internet Status: Connected" -foregroundcolor Green
 }
+cd \
+cd "$env:USERPROFILE"
+cd desktop
+cd words
+$rcntA = ls -name "*.txt" | sort LastWriteTime -descending 
+$rcntB = $rcntA -split ".txt" | select -index 0,2,4
+$rcntC = [string]::join(", ", $rcntB)
+cd $p00
+write-host "Recently defined words: $rcntC"
 write-host "Sources: www.wordnik.com, www.thesaurus.com, www.duckduckgo.com"
 write-host "Type ""help"" for information on usage of Lingo To Go."
 echo " "	
@@ -93,6 +102,7 @@ main_func
 # BEGINNING
 function dictionary_func {
 $word = read-host "Define"
+# CHECKS
 if ($word -like "main") {
 	echo 'main_func' > start.txt
 	main_func
@@ -111,10 +121,18 @@ cd Words
 #-#-#
 if (Test-Path "$word.txt") {
 	echo " "
-	echo " "
 	type "$word.txt"
 	echo " "
 	echo --------------------------------------------------------------------------------O
+	echo " "
+	dictionary_func
+}
+ping google.com -n 1 | Out-Null
+if ( $lastexitcode -eq "1" ) {
+	echo " "
+	write-host "Unable to search word."
+	write-host "Internet Status: Not Connected" -foregroundcolor Red
+	write-host "Connect to the internet and retry."
 	echo " "
 	dictionary_func
 }
@@ -122,6 +140,10 @@ echo $word >> "$word.txt"
 echo " " >> "$word.txt"
 # - - - - - - - - - - - - - - - - - - - - - -
 # WEB PROCESS
+echo " "
+write-host "---------------------------O" -foregroundcolor Green
+write-host "  Source: www.wordnik.com  " -foregroundcolor Green
+write-host "---------------------------O" -foregroundcolor Green
 if ( $word -contains ' ' ) {
 	$word = $word.replace(" ", "+")
 }
@@ -303,7 +325,7 @@ wordbank_func
 }
 # - - - - - - - - - - - - - - - - - - - - - 
 function study_func {
-	
+$stud = read-host "Study"	
 }
 # - - - - - - - - - - - - - - - - - - - - - 
 # Initiator
