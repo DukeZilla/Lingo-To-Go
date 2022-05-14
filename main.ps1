@@ -4,6 +4,7 @@ $ErrorActionPreference = 'silentlycontinue'
 $p00 = (pwd).path
 
 function banner_func {
+	
 echo --------------------------------------------------------------------------------O
 "`n"
 write-host '
@@ -17,26 +18,29 @@ write-host '
 echo " "
 write-host "Vocab words for takeout!" -foregroundcolor Yellow
 echo " "
-write-host "Version 0.4.20 Pre-Alpha"
+write-host "Version 0.4.21 Pre-Alpha"
 write-host "~ DukeZilla 2022"
 echo " "
 echo --------------------------------O
 echo " "
+# -internet check-
 ping google.com -n 1 | Out-Null
 if ( $lastexitcode -eq "1" ) {
 	write-host "Internet Status: Not Connected" -foregroundcolor Red
 } else {
 	write-host "Internet Status: Connected" -foregroundcolor Green
 }
+# -recently defined / info-
 cd \
 cd "$env:USERPROFILE"
 cd desktop
 cd words
-$rcntA = ls -name "*.txt" | sort LastWriteTime -descending 
+$rcntA = ls | sort LastWriteTime -descending | select name
 $rcntB = $rcntA -split ".txt" | select -index 0,2,4
-$rcntC = [string]::join(", ", $rcntB)
+$rcntC = $rcntB -split "=" | select -index 1,3,5
+$rcntD = [string]::join(", ", $rcntC)
 cd $p00
-write-host "Recently defined words: $rcntC"
+write-host "Recently defined words: $rcntD"
 write-host "Sources: www.wordnik.com, www.thesaurus.com, www.duckduckgo.com"
 write-host "Type ""help"" for information on usage of Lingo To Go."
 echo " "	
@@ -45,55 +49,56 @@ echo " "
 }
 
 function main_func {
+	
 cd $p00
 echo " "
 $uc00 = read-host "LTG>"
 echo " "
-if ( $uc00 -like "help" ) {
+	if ( $uc00 -like "help" ) {
 	type help.txt
 	main_func
-}
-if ( $uc00 -like "dictionary" ) {
+	}
+	if ( $uc00 -like "dictionary" ) {
 	echo 'dictionary_func' > start.txt
 	dictionary_func
 	main_func
-}
-if ( $uc00 -like "wordbank") {
+	}
+	if ( $uc00 -like "wordbank") {
 	echo 'wordbank_func' > start.txt
 	wordbank_func
 	main_func
-}
-if ( $uc00 -like "study" ) {
+	}
+	if ( $uc00 -like "study" ) {
 	echo 'study_func' > start.txt
 	echo "Coming soon"
 	main_func
-}
-if ( $uc00 -like "lang" ) {
+	}
+	if ( $uc00 -like "lang" ) {
 	echo "Coming soon"
 	main_func
-}
-if ( $uc00 -like "thesaurus" ) {
+	}
+	if ( $uc00 -like "thesaurus" ) {
 	echo 'thesaurus_func' > start.txt
 	echo "Coming soon"
 	main_func
-}
-if ( $uc00 -like "update" ) {
+	}
+	if ( $uc00 -like "update" ) {
 	set-executionpolicy bypass
 	pwsh.exe updater.ps1
 	main_func
-}
-if ( $uc00 -like "banner" ) {
+	}
+	if ( $uc00 -like "banner" ) {
 	banner_func
 	main_func
-}
-if ( $uc00 -like "clear" ) {
+	}
+	if ( $uc00 -like "clear" ) {
 	clear
 	main_func
-}
-if ( $uc00 -like "exit" ) {
+	}
+	if ( $uc00 -like "exit" ) {
 	kill -name cmd
 	exit
-}
+	}
 write-host """$uc00"" is not a recognized command. Type ""help"" for more information."
 main_func
 }
@@ -101,13 +106,14 @@ main_func
 # - - - - - - - - - - - - - - - - - - - - - -
 # BEGINNING
 function dictionary_func {
+	
 $word = read-host "Define"
-# CHECKS
 if ($word -like "main") {
+	cd $p00
 	echo 'main_func' > start.txt
 	main_func
 }
-#-#-#
+# CHECKS
 cd \
 cd "$env:USERPROFILE"
 cd desktop
@@ -303,6 +309,7 @@ echo ---------------------------------------------------------------------------
 dictionary_func }
 # - - - - - - - - - - - - - - - - - - - - - 
 function wordbank_func {
+	
 cd \
 cd "$env:USERPROFILE"
 cd desktop
@@ -325,6 +332,7 @@ wordbank_func
 }
 # - - - - - - - - - - - - - - - - - - - - - 
 function study_func {
+	
 $stud = read-host "Study"	
 }
 # - - - - - - - - - - - - - - - - - - - - - 
