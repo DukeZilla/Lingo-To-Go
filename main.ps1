@@ -18,7 +18,7 @@ write-host '
 echo " "
 write-host "Vocab words for takeout!" -foregroundcolor Yellow
 echo " "
-write-host "Version 0.4.21 Pre-Alpha"
+write-host "Version 0.4.22 Pre-Alpha"
 write-host "~ DukeZilla 2022"
 echo " "
 echo --------------------------------O
@@ -134,11 +134,15 @@ if (Test-Path "$word.txt") {
 	dictionary_func
 }
 ping google.com -n 1 | Out-Null
-if ( $lastexitcode -eq "1" ) {
+if ( $lastexitcode -eq "1" ) { 
+	echo " "
+	echo --------------------------------O
 	echo " "
 	write-host "Unable to search word."
 	write-host "Internet Status: Not Connected" -foregroundcolor Red
 	write-host "Connect to the internet and retry."
+	echo " "
+	echo --------------------------------O
 	echo " "
 	dictionary_func
 }
