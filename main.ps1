@@ -18,7 +18,7 @@ write-host '
 echo " "
 write-host "Vocab words for takeout!" -foregroundcolor Yellow
 echo " "
-write-host "Version 0.4.22 Pre-Alpha"
+write-host "Version 0.4.23 Pre-Alpha"
 write-host "~ DukeZilla 2022"
 echo " "
 echo --------------------------------O
@@ -85,7 +85,16 @@ echo " "
 	if ( $uc00 -like "update" ) {
 	set-executionpolicy bypass
 	pwsh.exe updater.ps1
-	main_func
+	echo 'Set shell = CreateObject("wscript.shell")' > "refresh.vbs"
+	echo 'wscript.sleep 2000' >> "refresh.vbs"
+	echo 'shell.run "taskkill /im pwsh.exe -f", 0' >> "refresh.vbs"
+	echo 'shell.run "taskkill /im cmd.exe -f", 0' >> "refresh.vbs"
+	echo 'wscript.sleep 1000' >> "refresh.vbs"
+	echo 'shell.run "Lingo-To-Go.bat"' >> "refresh.vbs"
+	start refresh.vbs
+	start-sleep 1
+	del refresh.vbs
+	exit
 	}
 	if ( $uc00 -like "banner" ) {
 	banner_func
